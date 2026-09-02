@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sunset_red的web_log!!!</title>
+<meta name="description" content="sunset_red的web_log！！！">
+<meta name="theme-color" content="#F5FAF9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1515" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" type="image/jpeg" href="1788099527648d80cbcbd6b06cbe7049e24d46d24d8a580a2.jpg">
+<link rel="apple-touch-icon" href="1788099527648d80cbcbd6b06cbe7049e24d46d24d8a580a2.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<div class="progress"><span id="progressFill"></span></div>
+
+
+<header class="top-app-bar" id="appBar">
+  <div class="app-bar-inner">
+    <a class="brand" href="#/" aria-label="回到首页">
+      <img class="brand-mark" src="1788099527648d80cbcbd6b06cbe7049e24d46d24d8a580a2.jpg" alt="博客">
+      <span class="brand-name">sunset_red的博客</span>
+    </a>
+    <nav class="app-nav" aria-label="页面导航">
+      <a href="#/" data-nav="home">首页</a>
+      <a href="#/archive" data-nav="archive">归档</a>
+      <a href="#/about" data-nav="about">关于</a>
+    </nav>
+    <div class="app-bar-actions">
+      <button class="icon-btn" id="appSearchBtn" aria-label="搜索文章"><span class="msr">search</span></button>
+      <button class="icon-btn" id="themeBtn" aria-label="切换主题"><span class="msr">dark_mode</span></button>
+    </div>
+  </div>
+</header>
+
+
+<aside class="nav-rail" aria-label="主导航">
+  <a class="rail-item" href="#/" data-nav="home">
+    <span class="rail-icon"><span class="msr">home</span></span><span class="rail-label">首页</span>
+  </a>
+  <a class="rail-item" href="#/archive" data-nav="archive">
+    <span class="rail-icon"><span class="msr">archive</span></span><span class="rail-label">归档</span>
+  </a>
+  <a class="rail-item" href="#/about" data-nav="about">
+    <span class="rail-icon"><span class="msr">person</span></span><span class="rail-label">关于</span>
+  </a>
+</aside>
+
+<main class="shell" id="main">
+
+
+  <section class="view" id="view-home">
+    <div class="home-grid">
+      <div class="home-main">
+
+        
+        <div class="hero">
+          <div class="hero-text">
+            <p class="hero-eyebrow">SUNSET_RED'S WEB LOG · EST. 2026.8.16</p>
+            <h1 class="hero-title">你好，我是<span class="hl hl-primary">sunset_red</span>。<br> <span class="hl hl-tertiary">哈基米</span>，<br><span class="hl hl-tertiary">《Squad》</span>OP</h1>
+            <p class="hero-sub">squad 1000+小时小资历，喜欢哈基米——耄耋 不知的写什么凑字数，不知的写什么凑字数，不知的写什么凑字数，不知的写什么凑字数</p>
+            <div class="hero-actions">
+              <button class="btn btn-filled" id="heroRead">开始阅读<span class="msr">arrow_forward</span></button>
+              <a class="btn btn-tonal" href="#/about">关于我</a>
+            </div>
+            <p class="hero-meta">
+              <span class="msr">edit_note</span><span id="statPosts">–</span> 篇文章
+              <span class="sep">·</span><span id="statWords">–</span> 字
+              <span class="sep">·</span><span class="msr">update</span><span id="statUpdated">–</span>更新
+            </p>
+          </div>
+          <div class="hero-shapes" aria-hidden="true">
+            <div class="par" data-depth="1.6" style="left:10%;top:14%"><div class="shape shape-blob"></div></div>
+            <div class="par" data-depth="0.8" style="right:6%;top:2%"><div class="shape shape-ring"></div></div>
+            <div class="par" data-depth="2.4" style="right:20%;bottom:20%"><div class="shape shape-pill"></div></div>
+            <div class="par" data-depth="1.1" style="left:0;bottom:10%"><div class="shape shape-cookie"></div></div>
+            <div class="par" data-depth="0.5" style="left:40%;top:0"><div class="shape shape-dots"></div></div>
+          </div>
+        </div>
+
+        
+        <section id="featuredSlot" aria-label="置顶文章"></section>
+
+        
+        <section class="feed" id="feedAnchor">
+          <div class="feed-toolbar">
+            <h2 class="section-title">全部文章<span class="feed-count" id="feedCount"></span></h2>
+            <div class="search-bar">
+              <span class="msr">search</span>
+              <input id="searchInput" type="text" placeholder="搜索标题、摘要或标签…" aria-label="搜索文章">
+              <button class="icon-btn sm" id="searchClear" aria-label="清空搜索"><span class="msr">close</span></button>
+            </div>
+          </div>
+          <div class="chip-row" id="chipRow" role="group" aria-label="按分类过滤"></div>
+          <div class="post-list" id="postList"></div>
+          <div class="empty-state" id="emptyState" hidden>
+            <span class="msr">search_off</span>
+            <p>没有找到相关的文章，换个关键词试试？</p>
+            <button class="btn btn-text" id="emptyClear">清除筛选</button>
+          </div>
+        </section>
+      </div>
+
+      
+      <aside class="home-aside">
+        <div class="aside-card card">
+          <img class="aside-avatar" src="1788099527648d80cbcbd6b06cbe7049e24d46d24d8a580a2.jpg" alt="头像">
+          <h3 class="aside-name">sunset_red</h3>
+          <p class="aside-bio"> 最好的？ai使用者 / 《Squad》OP</p>
+          <div class="aside-social">
+            <a class="icon-btn" href="https://space.bilibili.com/2143665106?spm_id_from=333.1007.0.0" target="_blank" rel="noopener" aria-label="哔哩哔哩主页"><span class="msr">smart_display</span></a>
+            <a class="icon-btn" href="https://github.com/hongyinggfghg" target="_blank" rel="noopener" aria-label="folder_code"><span class="msr">folder_code</span></a>
+            <a class="icon-btn" href="https://qun.qq.com/universal-share/share?ac=1&authKey=MtZVMoM16aaBMXMmHQZI2kFpi7PyZKCcYmU%2B6uMb%2BdHhhKy9Da8Tt0VvDX%2Bzkjvr&busi_data=eyJncm91cENvZGUiOiIxMTIxMTUxMTkxIiwidG9rZW4iOiI0MzdLWVpiNURxaThYM2tXaGVvV3VlcllIZVFIWlExUXhhenF6a0tCQWo0Sjl3R0VDcTVia3IwT2VIZ1lYRjlRIiwidWluIjoiMjY3MzM2ODM4MiJ9&data=wO5_016UmVou6e7lBhlbWAXGlmTSErDT1pSzOw2TSWqgSu05-gU6txOxobL7jRSRnSUBfg2rzifJkcBd1EI9VA&svctype=4&tempid=h5_group_info" target="_blank" rel="noopener" aria-label="forum"><span class="msr">forum</span></a>
+          </div>
+          <a class="aside-more" href="#/about">了解更多 →</a>
+        </div>
+
+        <div class="aside-card card">
+          <h3 class="aside-card-title"><span class="msr">local_fire_department</span>文章</h3>
+          <div class="pop-list" id="popularList"></div>
+        </div>
+
+        <div class="aside-card card">
+          <h3 class="aside-card-title"><span class="msr">sell</span>标签</h3>
+          <div class="tag-cloud" id="tagCloud"></div>
+        </div>
+
+        <div class="aside-card card bili-card">
+          <h3 class="aside-card-title"><span class="msr">smart_display</span>哔哩哔哩</h3>
+          <p class="aside-desc">偶尔发视频：生活？、抽象、《Squad》。来个三连？</p>
+          <a class="btn btn-filled" href="https://space.bilibili.com/2143665106?spm_id_from=333.1007.0.0" target="_blank" rel="noopener">进入主页<span class="msr">open_in_new</span></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  
+  <article class="view" id="view-post">
+    <div class="post-layout">
+      <div class="post-main">
+        <a class="btn btn-text post-back" href="#/"><span class="msr">arrow_back</span>返回首页</a>
+        <div class="post-head" id="postHead"></div>
+        <figure class="post-cover" id="postCover"></figure>
+        <div class="prose" id="postBody"></div>
+
+        <div class="post-actions">
+          <button class="btn btn-tonal btn-like" id="likeBtn" aria-pressed="false">
+            <span class="msr">favorite</span><span id="likeCount">0</span><span class="like-label">喜欢</span>
+          </button>
+          <button class="icon-btn big" id="markBtn" aria-label="收藏"><span class="msr">bookmark</span></button>
+          <button class="icon-btn big" id="shareBtn" aria-label="分享"><span class="msr">share</span></button>
+        </div>
+
+        <div class="post-nav" id="postNav"></div>
+      </div>
+      <aside class="post-aside"><nav class="toc" id="toc" aria-label="文章目录"></nav></aside>
+    </div>
+  </article>
+
+  
+  <section class="view" id="view-archive">
+    <header class="page-head">
+      <h1>归档</h1>
+      <p>共 <span id="archCount">–</span> 篇 · 自 2026 年 8 月 16 日起</p>
+    </header>
+    <div id="archiveList"></div>
+  </section>
+
+
+  <section class="view" id="view-about">
+    <header class="page-head"><h1>关于</h1><p>sunset_red</p></header>
+
+    <div class="about-grid">
+      <div class="card about-intro">
+        <img class="about-avatar" src="1788099527648d80cbcbd6b06cbe7049e24d46d24d8a580a2.jpg" alt="头像">
+        <div class="about-intro-text">
+          <h2>Sunset_Red <small>sunset_red</small></h2>
+          <p class="about-role"> · 哈基米-爱好者 · 《Squad》OP</p>
+          <p>。幻想着能考进本科、跳楼ing 。。。</p>
+          <div class="aside-social">
+            <a class="icon-btn" href="https://space.bilibili.com/2143665106?spm_id_from=333.1007.0.0" target="_blank" rel="noopener" aria-label="哔哩哔哩主页"><span class="msr">smart_display</span></a>
+            <a class="icon-btn" href="#/archive" aria-label="文章归档"><span class="msr">archive</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-stats card">
+        <div><b id="asPosts">–</b><span>篇文章</span></div>
+        <div><b id="asDays">–</b><span>天建站</span></div>
+        <div><b>2</b><span>个爱好</span></div>
+      </div>
+
+      
+      <div class="card about-block">
+        <h3 class="aside-card-title"><span class="msr">route</span>时间线</h3>
+        <div class="timeline" id="timelineList"></div>
+      </div>
+
+      <div class="card about-block">
+        <h3 class="aside-card-title"><span class="msr">backpack</span>我在用</h3>
+        <div class="tag-cloud static">
+          <span class="chip">VS Code</span><span class="chip">哔哩哔哩</span>
+        </div>
+      </div>
+
+
+      <div class="card about-block about-contact">
+        <h3 class="aside-card-title"><span class="msr">chat_bubble</span>想说的话？</h3>
+        <p>欢迎来我的哔哩哔哩主页</p>
+        <a class="btn btn-filled" href="https://space.bilibili.com/2143665106?spm_id_from=333.1007.0.0" target="_blank" rel="noopener"><span class="msr">smart_display</span>哔哩哔哩主页</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>© 2026 红云 · sunset_red的web_log · Powered by hongyun，z.ai GLM-5.3 HTML / CSS / JS + Cloudflare Workers KV</p>
+    <p class="footer-links"><a href="#/">首页</a><a href="#/archive">归档</a><a href="#/about">关于</a><button class="link-btn" id="footerTop">回到顶部</button></p>
+  </footer>
+</main>
+
+
+<nav class="bottom-nav" aria-label="主导航">
+  <a class="bn-item" href="#/" data-nav="home"><span class="bn-icon"><span class="msr">home</span></span>首页</a>
+  <a class="bn-item" href="#/archive" data-nav="archive"><span class="bn-icon"><span class="msr">archive</span></span>归档</a>
+  <a class="bn-item" href="#/about" data-nav="about"><span class="bn-icon"><span class="msr">person</span></span>关于</a>
+</nav>
+
+
+<button class="fab" id="backTop" aria-label="回到顶部"><span class="msr">arrow_upward</span></button>
+
+
+<div class="snackbar" id="snackbar" role="status" aria-live="polite">
+  <span class="msr" id="snackIcon">check_circle</span>
+  <span class="snackbar-msg" id="snackMsg"></span>
+  <button class="snackbar-action" id="snackAction" hidden></button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
