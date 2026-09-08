@@ -481,22 +481,8 @@ mark { background: var(--md-primary-container); color: var(--md-on-primary-conta
 .about-photos figure:nth-child(3) img { transform: rotate(-1.2deg) translateY(-4px); }
 .about-photos figure:hover img { transform: rotate(0) translateY(0) scale(1.03); }
 .about-photos figcaption { font-size: .78rem; color: var(--md-on-surface-variant); }
-
-.about-contact { 
-  grid-column: 1 / -1; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: flex-start;
-  gap: 18px;
-}
-
-
-.contact-btns {
-  display: flex;
-  gap: 14px; 
-  flex-wrap: wrap; 
-}
-
+.about-contact { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; }
+.about-contact .btn { align-self: flex-start; }
 
 /* ---------------- 页脚 ---------------- */
 .site-footer { margin-top: 88px; padding-top: 32px; border-top: 1px solid var(--md-outline-variant); text-align: center; color: var(--md-on-surface-variant); font-size: .8rem; }
