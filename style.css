@@ -463,6 +463,7 @@ mark { background: var(--md-primary-container); color: var(--md-on-primary-conta
 .about-block > p { color: var(--md-on-surface-variant); font-size: .92rem; margin-bottom: 18px; }
 
 /* 时间线（数据来自 Workers KV） */
+.timeline-scroll { max-height: 420px; overflow-y: auto; padding-right: 6px; }
 .timeline { position: relative; padding-left: 30px; }
 .timeline::before { content: ""; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 2px; background: var(--md-outline-variant); border-radius: 2px; }
 .tl-item { position: relative; padding-bottom: 26px; }
