@@ -363,6 +363,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <p>· 发布 = 新增或覆盖；删除文章需后端支持 DELETE 接口（见配套说明），未更新前请到 KV 面板手动编辑 posts 键。</p>
     <p>· 修改文章：在“云端文章”里点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入 → 改完再点“发布文章”即可。</p>
     <p>· 时间线：每条后面点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入修改（再点一次可取消），点 <span class="msr" style="font-size:14px;vertical-align:-2px">delete</span> 删除；编辑时“追加”按钮会变为“保存修改”。</p>
+    <p>· 代码块：点“代码块”插入后，任何语言的代码直接粘贴进去即可，尖括号、引号等符号按纯文本原样显示，不需要手动转义。</p>
   </footer>
 </main>
 
@@ -372,6 +373,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   const $  = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll(s));
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // 代码块按纯文本渲染（与博客端 script.js 一致）：先反转义再统一转义，任意语言的 < > & 都能原样显示
+  const unescapeEntities = s => String(s).replace(/&(?:amp|lt|gt|quot|#39);/gi, c => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" }[c.toLowerCase()]));
+  const plainCodeBlocks = html => String(html).replace(/<pre\b([^>]*)>([\s\S]*?)<\/pre>/gi, (m, attrs, inner) => {
+    const cm = inner.match(/^\s*<code\b[^>]*>([\s\S]*?)<\/code>\s*$/i);
+    const lang = (attrs.match(/data-lang\s*=\s*"([^"]*)"/i) || [])[1] || 'text';
+    return `<pre data-lang="${esc(lang)}"><code>${esc(unescapeEntities(cm ? cm[1] : inner))}</code></pre>`;
+  });
   const today = () => new Date().toISOString().slice(0, 10);
 
 
@@ -595,7 +603,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     p:     s => `<p>${s || '段落文字'}</p>\n`,
     b:     s => `<strong>${s || '加粗文字'}</strong>`,
     code:  s => `<code>${s || '行内代码'}</code>`,
-    pre:   s => `<pre data-lang="代码类型"><code>${s || '# 代码'}</code></pre>\n`,
+    pre:   s => `<pre><code>${s || '# 代码'}</code></pre>\n`,
     quote: s => `<blockquote>${s || '引用的文字'}</blockquote>\n`,
     ul:    s => `<ul>\n  <li>${s || '条目一'}</li>\n  <li>条目二</li>\n</ul>\n`,
     img:   s => `<figure><img src="https://loremflickr.com/900/600/landscape?lock=1" alt="${s || '图片说明'}" loading="lazy"><figcaption>${s || '图片说明'}</figcaption></figure>\n`,
@@ -625,7 +633,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   let previewOn = false;
   function renderPreview() {
     if (!previewOn) return;
-    $('#preview').innerHTML = contentEl.value || '<p class="placeholder">正文为空</p>';
+    $('#preview').innerHTML = contentEl.value ? plainCodeBlocks(contentEl.value) : '<p class="placeholder">正文为空</p>';
   }
   $('#previewBtn').addEventListener('click', () => {
     previewOn = !previewOn;

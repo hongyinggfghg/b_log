@@ -30,6 +30,13 @@
         return m ? `${m[1]} 年 ${+m[2]} 月 ${+m[3]} 日` : String(iso || '');
     };
     const plainText = html => String(html || '').replace(/<[^>]+>/g, '');
+    // 代码块按纯文本渲染：内容先反转义再统一转义，任意语言的 < > & 都能原样显示
+    const unescapeEntities = s => String(s).replace(/&(?:amp|lt|gt|quot|#39);/gi, c => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" }[c.toLowerCase()]));
+    const plainCodeBlocks = html => String(html).replace(/<pre\b([^>]*)>([\s\S]*?)<\/pre>/gi, (m, attrs, inner) => {
+        const cm = inner.match(/^\s*<code\b[^>]*>([\s\S]*?)<\/code>\s*$/i);
+        const lang = (attrs.match(/data-lang\s*=\s*"([^"]*)"/i) || [])[1] || 'text';
+        return `<pre data-lang="${esc(lang)}"><code>${esc(unescapeEntities(cm ? cm[1] : inner))}</code></pre>`;
+    });
     const countChars = p => plainText(p.content).replace(/\s/g, '').length;
     const readMin = p => Math.max(1, Math.round(countChars(p) / 400));
     const fmtWords = n => n >= 10000 ? (n / 10000).toFixed(1) + ' 万' : String(n);
@@ -284,7 +291,7 @@
 
         const body = document.getElementById('postBody');
         if (body) {
-            body.innerHTML = p.content || '';
+            body.innerHTML = plainCodeBlocks(p.content || '');
 
             
             const hs = $$('h2, h3', body);
