@@ -175,6 +175,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tl-row { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 12px; background: var(--md-surface-container); }
 .tl-row b { font: 600 .75rem var(--font-mono); color: var(--md-primary); }
 .tl-row p { font-size: .8rem; color: var(--md-on-surface-variant); }
+.tl-top { display: flex; align-items: center; gap: 6px; }
+.tl-main { flex: 1; min-width: 0; }
+.tl-row.editing { box-shadow: inset 0 0 0 1.5px var(--md-primary); }
 
 .tips { margin-top: 32px; padding: 18px 22px; border-radius: 18px; background: var(--md-surface-container); font-size: .75rem; color: var(--md-on-surface-variant); }
 .tips p { margin-bottom: 4px; }
@@ -342,6 +345,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
           <input id="tDate" type="text" placeholder="2026-09-01" style="width:110px;flex:none">
           <input id="tText" type="text" placeholder="一件事，如：第一次用 KV 发文">
           <button class="btn btn-tonal" id="tlAddBtn"><span class="msr">add</span>追加</button>
+          <button class="btn btn-tonal" id="tlCancelBtn" hidden><span class="msr">close</span>取消</button>
         </div>
         <div class="tl-list" id="tlList"><p class="placeholder">连接后显示</p></div>
       </section>
@@ -359,6 +363,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <p>· 本页面不含任何密码（运行时输入），可放心部署到 Pages（地址：你的站/admin.html），也可以只在本地使用。</p>
     <p>· 发布 = 新增或覆盖；删除文章需后端支持 DELETE 接口（见配套说明），未更新前请到 KV 面板手动编辑 posts 键。</p>
     <p>· 修改文章：在“云端文章”里点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入 → 改完再点“发布文章”即可。</p>
+    <p>· 时间线：每条后面点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入修改，点 <span class="msr" style="font-size:14px;vertical-align:-2px">delete</span> 删除；编辑时“追加”按钮会变为“保存修改”。</p>
   </footer>
 </main>
 
@@ -637,27 +642,98 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       renderTimeline(Array.isArray(list) ? list : []);
     } catch (e) { /* 未连接时静默 */ }
   }
+  let tlCache = [], tlEditing = -1;
   function renderTimeline(list) {
+    tlCache = list;
     $('#tlList').innerHTML = list.length
-      ? list.map(i => `<div class="tl-row"><b>${esc(i.date)}</b><p>${esc(i.text)}</p></div>`).join('')
+      ? list.map((item, i) => `
+        <div class="tl-row${i === tlEditing ? ' editing' : ''}" data-i="${i}">
+          <div class="tl-top">
+            <div class="tl-main">
+              <b>${esc(item.date)}${i === tlEditing ? ' · <i class="editing-flag">编辑中</i>' : ''}</b>
+              <p>${esc(item.text)}</p>
+            </div>
+            <div class="ci-actions">
+              <button class="icon-btn sm" data-act="edit" title="编辑这条"><span class="msr">edit</span></button>
+              <button class="icon-btn sm" data-act="del" title="删除这条"><span class="msr">delete</span></button>
+            </div>
+          </div>
+        </div>`).join('')
       : '<p class="placeholder">还没有时间线条目</p>';
   }
+  $('#tlList').addEventListener('click', e => {
+    const row = e.target.closest('.tl-row');
+    if (!row) return;
+    const act = e.target.closest('[data-act]');
+    if (!act) return;
+    const i = +row.dataset.i;
+    if (act.dataset.act === 'edit') startTlEdit(i);
+    else delTimeline(i);
+  });
+  function startTlEdit(i) {
+    const item = tlCache[i];
+    if (!item) return;
+    tlEditing = i;
+    $('#tDate').value = item.date;
+    $('#tText').value = item.text;
+    $('#tlAddBtn').innerHTML = '<span class="msr">save</span>保存修改';
+    $('#tlCancelBtn').hidden = false;
+    renderTimeline(tlCache);
+    $('#tText').focus();
+    msg('info', '正在编辑这条时间线，改完点“保存修改”', 'edit');
+  }
+  function resetTlForm() {
+    tlEditing = -1;
+    $('#tlAddBtn').innerHTML = '<span class="msr">add</span>追加';
+    $('#tlCancelBtn').hidden = true;
+    $('#tDate').value = today();
+    $('#tText').value = '';
+  }
+  $('#tlCancelBtn').addEventListener('click', () => {
+    resetTlForm();
+    renderTimeline(tlCache);
+  });
   async function addTimeline() {
     const date = $('#tDate').value.trim();
     const text = $('#tText').value.trim();
     if (!date || !text) return msg('err', '时间线的日期和内容都要填', 'error');
     if (!token()) return msg('err', '请先填写发布密码', 'key');
+    const editing = tlEditing >= 0;
+    const btn = $('#tlAddBtn');
+    btn.disabled = true;
     try {
       await fetchJSON(base() + '/api/timeline', {
-        method: 'POST',
+        method: editing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token() },
-        body: JSON.stringify({ date, text })
+        body: JSON.stringify(editing ? { i: tlEditing, date, text } : { date, text })
       });
-      $('#tText').value = '';
-      msg('ok', '时间线已追加（关于页可见）', 'check_circle');
+      resetTlForm();
+      msg('ok', editing ? '时间线已更新（关于页可见）' : '时间线已追加（关于页可见）', 'check_circle');
       loadTimeline();
     } catch (e) {
-      msg('err', e.status === 401 ? '密码不对' : '追加失败：' + esc(e.message), 'error');
+      msg('err', e.status === 401 ? '密码不对' : (editing ? '更新失败：' : '追加失败：') + esc(e.message), 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  async function delTimeline(i) {
+    const item = tlCache[i];
+    if (!item) return;
+    if (!confirm(`删除这条时间线？\n${item.date} ${item.text}\n此操作不可恢复。`)) return;
+    if (!token()) return msg('err', '请先填写发布密码', 'key');
+    try {
+      await fetchJSON(base() + '/api/timeline?i=' + i, {
+        method: 'DELETE',
+        headers: { 'X-Admin-Token': token() }
+      });
+      if (tlEditing === i) resetTlForm();
+      else if (tlEditing > i) tlEditing--; // 被删条目排在编辑条目之前，索引随之后移
+      msg('ok', '已删除这条时间线', 'delete');
+      loadTimeline();
+    } catch (e) {
+      if (e.status === 401) msg('err', '密码不对，无法删除', 'key');
+      else if (e.status === 404) msg('err', '条目不存在，请刷新列表后重试', 'refresh');
+      else msg('err', '删除失败：' + esc(e.message), 'error');
     }
   }
   $('#tlAddBtn').addEventListener('click', addTimeline);
