@@ -13,7 +13,7 @@
     const POSTS = [
         {
             id: 'hello', title: 'hello',
-            excerpt: 'hello',
+            excerpt: '你看到这个时kv容器已经死了',
             category: '前端', tags: ['Workers', 'KV', '前端'], date: '2026-08-20', seed: 'kvblog', heat: 51, featured: true,
             content: `<h1>hello</h1>`
         }
@@ -48,7 +48,7 @@
         if (el) el.addEventListener(evt, fn);
         else console.warn('[红云的博客] 元素不存在，已跳过绑定：' + sel);
     };
-    const safe = fn => { try { fn(); } catch (e) { console.error('[红云的博客] 渲染出错：', e); } };
+    const safe = fn => { try { fn(); } catch (e) { console.error('渲染出错：', e); } };
 
     
     const FLICKR = 'https://loremflickr.com';
@@ -576,11 +576,11 @@
                             go('#/post/' + found.id);
                         }
                     }
-                    console.info('[红云的博客] 已从 KV 加载 ' + posts.length + ' 篇文章。');
+                    console.info(' 已从 KV 加载 ' + posts.length + ' 篇文章。');
                 }
             }
         } catch (e) {
-            console.warn('[红云的博客] KV 文章读取失败，使用内置演示数据：', e && e.message);
+            console.warn(' KV 文章读取失败，使用内置演示数据：', e && e.message);
         }
 
         
@@ -723,13 +723,13 @@
             route();
             loadFromKV();
         } catch (e) {
-            console.error('[红云的博客] 初始化出错：', e);
+            console.error(' 初始化出错：', e);
             forceHome();
         }
         
         setTimeout(() => {
             if (!document.querySelector('.view.active')) {
-                console.warn('[红云的博客] 检测到无激活视图，已强制显示首页。');
+                console.warn('检测到无激活视图，已强制显示首页。');
                 forceHome();
             }
         }, 400);
