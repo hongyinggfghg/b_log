@@ -345,7 +345,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
           <input id="tDate" type="text" placeholder="2026-09-01" style="width:110px;flex:none">
           <input id="tText" type="text" placeholder="一件事，如：第一次用 KV 发文">
           <button class="btn btn-tonal" id="tlAddBtn"><span class="msr">add</span>追加</button>
-          <button class="btn btn-tonal" id="tlCancelBtn" hidden><span class="msr">close</span>取消</button>
         </div>
         <div class="tl-list" id="tlList"><p class="placeholder">连接后显示</p></div>
       </section>
@@ -363,7 +362,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <p>· 本页面不含任何密码（运行时输入），可放心部署到 Pages（地址：你的站/admin.html），也可以只在本地使用。</p>
     <p>· 发布 = 新增或覆盖；删除文章需后端支持 DELETE 接口（见配套说明），未更新前请到 KV 面板手动编辑 posts 键。</p>
     <p>· 修改文章：在“云端文章”里点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入 → 改完再点“发布文章”即可。</p>
-    <p>· 时间线：每条后面点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入修改，点 <span class="msr" style="font-size:14px;vertical-align:-2px">delete</span> 删除；编辑时“追加”按钮会变为“保存修改”。</p>
+    <p>· 时间线：每条后面点 <span class="msr" style="font-size:14px;vertical-align:-2px">edit</span> 载入修改（再点一次可取消），点 <span class="msr" style="font-size:14px;vertical-align:-2px">delete</span> 删除；编辑时“追加”按钮会变为“保存修改”。</p>
   </footer>
 </main>
 
@@ -671,28 +670,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     else delTimeline(i);
   });
   function startTlEdit(i) {
+    if (i === tlEditing) { resetTlForm(); renderTimeline(tlCache); return; } // 再点一次同一行的“编辑”= 取消编辑
     const item = tlCache[i];
     if (!item) return;
     tlEditing = i;
     $('#tDate').value = item.date;
     $('#tText').value = item.text;
     $('#tlAddBtn').innerHTML = '<span class="msr">save</span>保存修改';
-    $('#tlCancelBtn').hidden = false;
     renderTimeline(tlCache);
     $('#tText').focus();
-    msg('info', '正在编辑这条时间线，改完点“保存修改”', 'edit');
+    msg('info', '正在编辑这条时间线，再点一次“编辑”可取消，改完点“保存修改”', 'edit');
   }
   function resetTlForm() {
     tlEditing = -1;
     $('#tlAddBtn').innerHTML = '<span class="msr">add</span>追加';
-    $('#tlCancelBtn').hidden = true;
     $('#tDate').value = today();
     $('#tText').value = '';
   }
-  $('#tlCancelBtn').addEventListener('click', () => {
-    resetTlForm();
-    renderTimeline(tlCache);
-  });
   async function addTimeline() {
     const date = $('#tDate').value.trim();
     const text = $('#tText').value.trim();
