@@ -2,7 +2,7 @@
 
 一个**纯静态、零构建、零框架、零成本**的无服务器博客：前端是普通 HTML/CSS/JS，后端是 Cloudflare Pages Functions，数据全部存在 Cloudflare Workers KV 里。文章通过自带的发布后台在线写作，不需要数据库、不需要本地环境。
 
-> 作者：红云（sunset_red） · 写作辅助：z.ai GLM-5.3 · Powered by Cloudflare Pages + Workers KV
+> 作者：红云（sunset_red） Powered by Cloudflare Pages + Workers KV· + z.ai GLM-5.3
 
 
 
